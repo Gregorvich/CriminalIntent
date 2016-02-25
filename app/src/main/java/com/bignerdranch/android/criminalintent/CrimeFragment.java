@@ -12,7 +12,6 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.CompoundButton;
-import android.text.format.DateFormat;
 
 /**
  * Created by vongr on 2/24/2016.
