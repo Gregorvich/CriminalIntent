@@ -13,6 +13,8 @@ import android.view.LayoutInflater;
 import android.os.Bundle;
 import android.widget.TextView;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.content.Intent;
 import java.util.List;
 
@@ -73,6 +75,13 @@ public class CrimeListFragment extends Fragment{
             mTitleTextView.setText(mCrime.getTitle());
             mDateTextView.setText(mCrime.getDate().toString());
             mSolvedCheckBox.setChecked(mCrime.isSolved());
+
+            mSolvedCheckBox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    mCrime.setSolved(isChecked);
+                }
+            });
         }
 
         @Override
@@ -80,6 +89,7 @@ public class CrimeListFragment extends Fragment{
             Intent intent = CrimeActivity.newIntent(getActivity(), mCrime.getId());
             startActivity(intent);
         }
+
     }
 
     private class CrimeAdapter extends RecyclerView.Adapter<CrimeHolder> {
