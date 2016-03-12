@@ -11,6 +11,9 @@
     <string name="hide_subtitle">Hide Subtitle</string>
     <string name="subtitle_format">%1$s crimes</string>
     <string name="remove_crime">Delete Crime</string>
+    <string name="start_screen_text">There are currently no crimes to display. Press here
+    to get started!</string>
+    <string name="start_button">Start</string>
 
     <plurals name="subtitle_plural">
         <item quantity="one">%1$s crime</item>
