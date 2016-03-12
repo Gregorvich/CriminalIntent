@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.LayoutInflater;
 import android.os.Bundle;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -29,6 +30,20 @@ public class CrimeListFragment extends Fragment{
     private RecyclerView mCrimeRecyclerView;
     private CrimeAdapter mAdapter;
     private boolean mSubtitleVisible;
+    private TextView mStartScreenText;
+    private Button mStartButton;
+
+    private int getCrimeSize(){
+        CrimeLab crimeLab = CrimeLab.get(getActivity());
+        return crimeLab.getCrimes().size();
+    }
+
+    private void createCrime(){
+        Crime crime = new Crime();
+        CrimeLab.get(getActivity()).addCrime(crime);
+        Intent intent = CrimePagerActivity.newIntent(getActivity(), crime.getId());
+        startActivity(intent);
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -38,12 +53,20 @@ public class CrimeListFragment extends Fragment{
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        CrimeLab crimeLab = CrimeLab.get(getActivity());
-        int crimeSize = crimeLab.getCrimes().size();
-        View startingView = inflater.inflate(R.layout.view_initial, container, false);
-        View mainView = inflater.inflate(R.layout.fragment_crime_list, container, false);
+        View view = inflater.inflate(R.layout.fragment_crime_list, container, false);
 
-        mCrimeRecyclerView = (RecyclerView) mainView.findViewById(R.id.crime_recycler_view);
+        mStartScreenText = (TextView)view.findViewById(R.id.start_screen_text_view);
+        mStartButton = (Button)view.findViewById(R.id.start_button);
+        mStartButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                createCrime();
+            }
+        });
+
+
+
+        mCrimeRecyclerView = (RecyclerView) view.findViewById(R.id.crime_recycler_view);
         mCrimeRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         if (savedInstanceState != null) {
@@ -52,13 +75,7 @@ public class CrimeListFragment extends Fragment{
 
         updateUI();
 
-        if (crimeSize <=0){
-            return startingView;
-        } else {
-            startingView.setVisibility(View.INVISIBLE);
-        }
-
-        return mainView;
+        return view;
     }
 
     @Override
@@ -84,10 +101,7 @@ public class CrimeListFragment extends Fragment{
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_item_new_crime:
-                Crime crime = new Crime();
-                CrimeLab.get(getActivity()).addCrime(crime);
-                Intent intent = CrimePagerActivity.newIntent(getActivity(), crime.getId());
-                startActivity(intent);
+                createCrime();
                 return true;
             case R.id.menu_item_show_subtitle:
                 mSubtitleVisible = !mSubtitleVisible;
@@ -100,8 +114,7 @@ public class CrimeListFragment extends Fragment{
     }
 
     private void updateSubtitle() {
-        CrimeLab crimeLab = CrimeLab.get(getActivity());
-        int crimeSize = crimeLab.getCrimes().size();
+        int crimeSize = getCrimeSize();
         String subtitle = getResources().getQuantityString(R.plurals.subtitle_plural, crimeSize, crimeSize);
 
         if (!mSubtitleVisible) {
@@ -124,6 +137,18 @@ public class CrimeListFragment extends Fragment{
         }
 
         updateSubtitle();
+
+        int crimeSize = getCrimeSize();
+
+        if (crimeSize <= 0){
+            mCrimeRecyclerView.setVisibility(View.GONE);
+            mStartScreenText.setVisibility(View.VISIBLE);
+            mStartButton.setVisibility(View.VISIBLE);
+        } else {
+            mCrimeRecyclerView.setVisibility(View.VISIBLE);
+            mStartScreenText.setVisibility(View.INVISIBLE);
+            mStartScreenText.setVisibility(View.INVISIBLE);
+        }
     }
 
     private class CrimeHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
