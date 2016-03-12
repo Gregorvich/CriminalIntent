@@ -19,7 +19,6 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.CompoundButton;
 import android.text.format.DateFormat;
-import android.widget.Toast;
 
 import java.util.Date;
 import java.util.UUID;
