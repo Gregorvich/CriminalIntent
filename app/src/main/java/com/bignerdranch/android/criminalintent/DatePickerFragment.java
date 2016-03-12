@@ -8,6 +8,8 @@ import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.widget.DatePicker;
 
@@ -74,5 +76,10 @@ public class DatePickerFragment extends DialogFragment {
         intent.putExtra(EXTRA_DATE, date);
 
         getTargetFragment().onActivityResult(getTargetRequestCode(), resultCode, intent);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
     }
 }
