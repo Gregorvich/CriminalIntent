@@ -30,8 +30,10 @@ public class CrimeFragment extends Fragment {
 
     private static final String ARG_CRIME_ID = "crime_id";
     private static final String DIALOG_DATE = "DialogDate";
+    private static final String DIALOG_DELETE = "DialogDelete";
 
     private static final int REQUEST_DATE = 0;
+    private static final int REQUEST_DELETION = 1;
 
     private Crime mCrime;
     private EditText mTitleField;
@@ -113,6 +115,11 @@ public class CrimeFragment extends Fragment {
             mCrime.setDate(date);
             updateDate();
         }
+
+        if (requestCode == REQUEST_DELETION){
+            CrimeLab.get(getActivity()).removeCrime(mCrime);
+            getActivity().finish();
+        }
     }
 
     private void updateDate() {
@@ -129,8 +136,10 @@ public class CrimeFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_item_remove_crime:
-                CrimeLab.get(getActivity()).removeCrime(mCrime);
-                getActivity().finish();
+                FragmentManager manager = getFragmentManager();
+                DeleteFragment dialog = DeleteFragment.newInstance(mCrime.getTitle());
+                dialog.setTargetFragment(CrimeFragment.this, REQUEST_DELETION);
+                dialog.show(manager, DIALOG_DELETE);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
