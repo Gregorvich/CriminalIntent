@@ -9,6 +9,7 @@ import android.provider.ContactsContract;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.ShareCompat;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -46,6 +47,7 @@ public class CrimeFragment extends Fragment {
     private CheckBox mSolvedCheckBox;
     private Button mSuspectButton;
     private Button mReportButton;
+    private Button mCallButton;
 
     public static CrimeFragment newInstance(UUID crimeId) {
         Bundle args = new Bundle();
@@ -119,12 +121,13 @@ public class CrimeFragment extends Fragment {
         mReportButton = (Button) v.findViewById(R.id.crime_report);
         mReportButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Intent i = new Intent(Intent.ACTION_SEND);
-                i.setType("text/plain");
-                i.putExtra(Intent.EXTRA_TEXT, getCrimeReport());
-                i.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.crime_report_subject));
-                i = Intent.createChooser(i, getString(R.string.send_report));
-                startActivity(i);
+                Intent intent = ShareCompat.IntentBuilder.from(getActivity())
+                        .setType("text/plain")
+                        .setChooserTitle(R.string.crime_report_subject)
+                        .createChooserIntent()
+                        .putExtra(Intent.EXTRA_TEXT, getCrimeReport())
+                        .putExtra(Intent.EXTRA_SUBJECT, getCrimeReport());
+                startActivity(intent);
             }
         });
 
