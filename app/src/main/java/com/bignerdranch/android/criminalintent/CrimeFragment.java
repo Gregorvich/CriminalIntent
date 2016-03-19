@@ -48,7 +48,6 @@ public class CrimeFragment extends Fragment {
     private Button mSuspectButton;
     private Button mReportButton;
     private Button mCallButton;
-    private String mSuspectId;
 
     public static CrimeFragment newInstance(UUID crimeId) {
         Bundle args = new Bundle();
@@ -169,6 +168,14 @@ public class CrimeFragment extends Fragment {
     }
 
     @Override
+    public void onResume(){
+        super.onResume();
+        if (mCrime.getSuspectId() != null) {
+            updateContactNumber();
+        }
+    }
+
+    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != Activity.RESULT_OK) {
             return;
@@ -198,38 +205,40 @@ public class CrimeFragment extends Fragment {
                 String suspect = c.getString(0);
                 mCrime.setSuspect(suspect);
                 mSuspectButton.setText(suspect);
-                mSuspectId = c.getString(1);
+                String suspectId = c.getString(1);
+                mCrime.setSuspectId(suspectId);
             } finally {
                 c.close();
             }
+        }
+    }
 
-            Uri numberUri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
-            String[] secondQueryFields = new String[] {
-                    ContactsContract.CommonDataKinds.Phone.NUMBER
-            };
-            Cursor cursor = getActivity().getContentResolver()
-                    .query(numberUri,
-                            secondQueryFields,
-                            ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?",
-                            new String[] { mSuspectId },
-                            null);
+    private void updateContactNumber() {
+        Uri numberUri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
+        String[] secondQueryFields = new String[] {
+                ContactsContract.CommonDataKinds.Phone.NUMBER
+        };
+        Cursor cursor = getActivity().getContentResolver()
+                .query(numberUri,
+                        secondQueryFields,
+                        ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?",
+                        new String[] { mCrime.getSuspectId() },
+                        null);
 
-            try {
-                if (cursor.getCount() == 0) {
-                    return;
-                }
-                cursor.moveToFirst();
-                String number = cursor.getString(0);
-                mCrime.setNumber(number);
-
-            } finally {
-                cursor.close();
+        try {
+            if (cursor.getCount() == 0) {
+                return;
             }
+            cursor.moveToFirst();
+            String number = cursor.getString(0);
+            mCrime.setNumber(number);
 
-            if (mCrime.getNumber() != null) {
-                mCallButton.setEnabled(true);
-            }
+        } finally {
+            cursor.close();
+        }
 
+        if (mCrime.getNumber() != null) {
+            mCallButton.setEnabled(true);
         }
     }
 
