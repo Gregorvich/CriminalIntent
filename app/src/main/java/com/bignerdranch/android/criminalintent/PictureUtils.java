@@ -4,11 +4,14 @@ import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
+import android.util.Log;
 
 /**
  * Created by vongr on 3/27/2016.
  */
 public class PictureUtils {
+
+    private static final String TAG = "PictureUtils";
     public static Bitmap getScaledBitmap(String path, Activity activity) {
         Point size = new Point();
         activity.getWindowManager().getDefaultDisplay()
@@ -17,8 +20,11 @@ public class PictureUtils {
         return getScaledBitmap(path, size.x, size.y);
     }
 
+
     public static Bitmap getScaledBitmap(String path, int destWidth, int destHeight) {
         //Read in the dimensions of the image on disk
+        Log.d(TAG, "The destination width for the bitmap: " + destWidth + ", and the " +
+                "destination height for the bitmap: " + destHeight, new Exception());
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
         BitmapFactory.decodeFile(path, options);
@@ -28,7 +34,7 @@ public class PictureUtils {
 
         // Figure out how much to scale down by
         int inSampleSize = 1;
-        if (srcWidth > destHeight || srcWidth > destWidth) {
+        if (srcHeight > destHeight || srcWidth > destWidth) {
             if (srcWidth > srcHeight) {
                 inSampleSize = Math.round(srcHeight / destHeight);
             } else {
